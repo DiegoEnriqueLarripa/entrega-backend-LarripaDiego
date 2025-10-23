@@ -1,5 +1,5 @@
-const { Router } = require('express');
-const { ProductoDAO } = require('../dao/producto.dao.js');
+import { Router } from 'express';
+import { ProductoDAO } from '../dao/producto.dao.js';
 
 const enrutador = Router();
 const productoDAO = new ProductoDAO('src/data/productos.json');
@@ -25,6 +25,8 @@ enrutador.get('/:pid', async (peticion, respuesta) => {
 enrutador.post('/', async (peticion, respuesta) => {
     try {
         const nuevoProducto = await productoDAO.agregarProducto(peticion.body);
+        const productosActualizados = await productoDAO.obtenerProductos();
+        peticion.io.emit('actualizarProductos', productosActualizados);
         respuesta.status(201).json(nuevoProducto);
     } catch (error) {
         respuesta.status(400).json({ error: error.message });
@@ -34,6 +36,8 @@ enrutador.post('/', async (peticion, respuesta) => {
 enrutador.put('/:pid', async (peticion, respuesta) => {
     try {
         const productoActualizado = await productoDAO.actualizarProducto(peticion.params.pid, peticion.body);
+        const productosActualizados = await productoDAO.obtenerProductos();
+        peticion.io.emit('actualizarProductos', productosActualizados);
         respuesta.json(productoActualizado);
     } catch (error) {
         respuesta.status(404).json({ error: error.message });
@@ -43,10 +47,12 @@ enrutador.put('/:pid', async (peticion, respuesta) => {
 enrutador.delete('/:pid', async (peticion, respuesta) => {
     try {
         await productoDAO.eliminarProducto(peticion.params.pid);
+        const productosActualizados = await productoDAO.obtenerProductos();
+        peticion.io.emit('actualizarProductos', productosActualizados);
         respuesta.json({ message: 'Producto eliminado exitosamente' });
     } catch (error) {
         respuesta.status(404).json({ error: error.message });
     }
 });
 
-module.exports = enrutador;
+export default enrutador;

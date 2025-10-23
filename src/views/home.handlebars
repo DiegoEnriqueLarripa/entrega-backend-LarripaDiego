@@ -1,0 +1,15 @@
+<h1>Lista de Productos (Vista Estática)</h1>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem;">
+{{#if productos.length}}
+    {{#each productos}}
+        <div style="border: 1px solid #ccc; padding: 1rem; border-radius: 8px;">
+            <h2>{{this.title}}</h2>
+            <p>{{this.description}}</p>
+            <p><strong>Precio:</strong> ${{this.price}}</p>
+            <p><strong>Stock:</strong> {{this.stock}} unidades</p>
+        </div>
+    {{/each}}
+{{else}}
+    <p>No hay productos para mostrar en este momento.</p>
+{{/if}}
+</div>

@@ -1,8 +1,7 @@
-// src/dao/producto.dao.js
-const { promises: fs } = require('fs');
-const { v4: uuidv4 } = require('uuid');
+import { promises as fs } from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
-class ProductoDAO {
+export class ProductoDAO {
     constructor(rutaArchivo) {
         this.rutaArchivo = rutaArchivo;
     }
@@ -70,5 +69,3 @@ class ProductoDAO {
         await this.#escribirArchivo(productosFiltrados);
     }
 }
-
-module.exports = { ProductoDAO };

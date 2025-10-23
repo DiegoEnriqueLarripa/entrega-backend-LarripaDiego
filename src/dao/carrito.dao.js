@@ -1,7 +1,7 @@
-const { promises: fs } = require('fs');
-const { v4: uuidv4 } = require('uuid');
+import { promises as fs } from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
-class CarritoDAO {
+export class CarritoDAO {
     constructor(rutaArchivo) {
         this.rutaArchivo = rutaArchivo;
     }
@@ -58,4 +58,3 @@ class CarritoDAO {
     }
 }
 
-module.exports = { CarritoDAO };

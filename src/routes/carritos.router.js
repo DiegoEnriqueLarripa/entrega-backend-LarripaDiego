@@ -1,5 +1,5 @@
-const { Router } = require('express');
-const { CarritoDAO } = require('../dao/carrito.dao.js');
+import { Router } from 'express';
+import { CarritoDAO } from '../dao/carrito.dao.js';
 
 const enrutador = Router();
 const carritoDAO = new CarritoDAO('src/data/carritos.json');
@@ -42,4 +42,4 @@ enrutador.post('/:cid/product/:pid', async (peticion, respuesta) => {
     }
 });
 
-module.exports = enrutador;
+export default enrutador;

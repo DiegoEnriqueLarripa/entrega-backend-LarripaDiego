@@ -1,16 +1,5 @@
 [
   {
-    "id": "a1b2c3d4-e5f6-7890-1234-abcde1",
-    "title": "Escuadra de Plástico",
-    "description": "Escuadra transparente de 20cm para dibujo técnico.",
-    "code": "LIB-ESC-01",
-    "price": 150,
-    "status": true,
-    "stock": 45,
-    "category": "Librería",
-    "thumbnails": []
-  },
-  {
     "id": "a1b2c3d4-e5f6-7890-1234-abcde2",
     "title": "Calculadora Científica",
     "description": "Modelo Cassio FX-82LAX con 252 funciones.",
