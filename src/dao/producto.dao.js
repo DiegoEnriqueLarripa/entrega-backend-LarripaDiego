@@ -1,71 +1,75 @@
-import { promises as fs } from 'fs';
-import { v4 as uuidv4 } from 'uuid';
+// src/dao/producto.dao.js
+import Product from '../models/producto.model.js';
 
-export class ProductoDAO {
-    constructor(rutaArchivo) {
-        this.rutaArchivo = rutaArchivo;
-    }
+class ProductoDAO {
 
-    async #leerArchivo() {
+    async obtenerProductosPaginados(limit = 10, page = 1, sort, query) {
         try {
-            const datos = await fs.readFile(this.rutaArchivo, 'utf-8');
-            return JSON.parse(datos);
+            const options = {
+                page,
+                limit,
+                lean: true
+            };
+
+            if (sort) {
+                options.sort = { price: sort === 'asc' ? 1 : -1 };
+            }
+
+            const resultado = await Product.paginate(query, options);
+            return resultado;
         } catch (error) {
-            if (error.code === 'ENOENT') return [];
-            throw new Error(`Error al leer el archivo: ${error.message}`);
+            console.error("Error al obtener productos paginados en el DAO:", error);
+            throw new Error("Error al obtener productos paginados");
         }
-    }
-
-    async #escribirArchivo(datos) {
-        await fs.writeFile(this.rutaArchivo, JSON.stringify(datos, null, 2));
-    }
-
-    async obtenerProductos() {
-        return await this.#leerArchivo();
-    }
-
-    async agregarProducto(producto) {
-        const productos = await this.#leerArchivo();
-        if (!producto.title || !producto.description || !producto.code || !producto.price || !producto.stock || !producto.category) {
-            throw new Error("Faltan campos obligatorios para agregar el producto.");
-        }
-        const nuevoProducto = {
-            id: uuidv4(),
-            status: producto.status !== undefined ? producto.status : true,
-            thumbnails: producto.thumbnails || [],
-            ...producto
-        };
-        productos.push(nuevoProducto);
-        await this.#escribirArchivo(productos);
-        return nuevoProducto;
     }
 
     async obtenerProductoPorId(id) {
-        const productos = await this.#leerArchivo();
-        const producto = productos.find(p => p.id === id);
-        if (!producto) throw new Error("Producto no encontrado.");
-        return producto;
+        try {
+            const producto = await Product.findById(id).lean();
+            if (!producto) {
+                throw new Error("Producto no encontrado.");
+            }
+            return producto;
+        } catch (error) {
+            console.error(`Error al obtener producto por ID ${id}:`, error);
+            throw new Error("Error al obtener producto por ID");
+        }
+    }
+
+    async agregarProducto(productoData) {
+        try {
+            return await Product.create(productoData);
+        } catch (error) {
+            console.error("Error al agregar producto en el DAO:", error);
+            throw new Error("Error al agregar el producto");
+        }
     }
 
     async actualizarProducto(id, camposAActualizar) {
-        const productos = await this.#leerArchivo();
-        const indice = productos.findIndex(p => p.id === id);
-        if (indice === -1) throw new Error("Producto no encontrado para actualizar.");
-        
-        const productoActualizado = { ...productos[indice], ...camposAActualizar };
-        delete productoActualizado.id;
-        productos[indice] = { ...productos[indice], ...productoActualizado };
-        
-        await this.#escribirArchivo(productos);
-        return productos[indice];
+        try {
+            const productoActualizado = await Product.findByIdAndUpdate(id, camposAActualizar, { new: true }).lean();
+            if (!productoActualizado) {
+                throw new Error("Producto no encontrado para actualizar.");
+            }
+            return productoActualizado;
+        } catch (error) {
+            console.error(`Error al actualizar producto ${id}:`, error);
+            throw new Error("Error al actualizar el producto");
+        }
     }
 
     async eliminarProducto(id) {
-        let productos = await this.#leerArchivo();
-        const productosFiltrados = productos.filter(p => p.id !== id);
-        if (productos.length === productosFiltrados.length) {
-            throw new Error("Producto no encontrado para eliminar.");
+        try {
+            const productoEliminado = await Product.findByIdAndDelete(id);
+            if (!productoEliminado) {
+                throw new Error("Producto no encontrado para eliminar.");
+            }
+            return productoEliminado;
+        } catch (error) {
+            console.error(`Error al eliminar producto ${id}:`, error);
+            throw new Error("Error al eliminar el producto");
         }
-        await this.#escribirArchivo(productosFiltrados);
     }
 }
+
+export const productoDAO = new ProductoDAO();

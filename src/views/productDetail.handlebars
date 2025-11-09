@@ -1,0 +1,23 @@
+<div style="background-color: #fff; border: 1px solid #ddd; padding: 2rem; border-radius: 8px;">
+    
+    <h2 style="font-size: 2em; margin-top: 0;">{{producto.title}}</h2>
+    
+    <p style="font-size: 1.2em; color: #555;">{{producto.description}}</p>
+    
+    <hr>
+    
+    <p><strong>Categoría:</strong> {{producto.category}}</p>
+    <p><strong>Código:</strong> {{producto.code}}</p>
+    <p><strong>Stock disponible:</strong> {{producto.stock}} unidades</p>
+    
+    <p style="font-size: 2em; font-weight: bold; color: #27ae60; margin: 1.5rem 0;">
+        Precio: ${{producto.price}}
+    </p>
+    
+    <button 
+        onclick="agregarAlCarrito('{{producto._id}}')"
+        style="background-color: #3498db; color: white; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; font-size: 1.2em; font-weight: bold;"
+    >
+        Agregar al Carrito
+    </button>
+</div>
